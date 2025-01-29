@@ -1,0 +1,65 @@
+@let usersLastFiveLocal = userLastFive$();
+@let productsLastFiveLocal = productLastFive$();
+
+<div class="tw-p-5">
+    <p>Ultimos cinco usuarios</p>
+    @if( usersLastFiveLocal.length > 0 ){
+        <p-table
+            [value]="(usersLastFiveLocal) || []"
+            [paginator]="false"
+            [rows]="5"
+            [responsiveLayout]="'scroll'"
+            lazy="true"
+            [totalRecords]="5"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Id</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-usuario>
+                <tr>
+                    <td>{{ usuario.id }}</td>
+                    <td>{{ usuario.username }}</td>
+                    <td>{{ usuario.mail }}</td>
+                    <td>{{ usuario.rol }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    }
+    
+    
+    <p>Productos</p>
+    @if( productsLastFiveLocal ){
+    
+        <p-table
+            [value]="(productsLastFiveLocal) || []"
+            [paginator]="false"
+            [rows]="5"
+            [responsiveLayout]="'scroll'"
+            lazy="true"
+            [totalRecords]="5"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-product>
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.nombre }}</td>
+                    <td>{{ product.cantidad }}</td>
+                    <td>${{ product.precio.toFixed(2) }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    }
+
+</div>

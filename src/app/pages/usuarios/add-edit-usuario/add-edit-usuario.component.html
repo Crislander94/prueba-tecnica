@@ -1,0 +1,123 @@
+@let labelForm = this.id()?.toString() === "0" ?  "Crear" : "Editar";
+@let labelUpdateForm = this.id()?.toString() === "0" ?  "Guardado" : "Actualizado";
+<div>
+    <h3 class="tw-text-center">{{labelForm}} usuario</h3>
+    <div class="container__messages">
+        <!-- <p-message severity="error">Mensaje de error</p-message> -->
+        @if (error$ | async ) {
+            <p-message severity="error">{{ (error$ | async) || 'Error al guardar el usuario'}}</p-message>
+        }
+        @if (saveSuccess$ | async ) {
+            <p-message severity="success">Usuario {{labelUpdateForm}} correctamente</p-message>
+        }
+    </div>
+    <div class="tw-flex tw-justify-center tw-gap-4">
+        @if( this.id() !== undefined ){
+            <form [formGroup]="addEditUserForm()" (ngSubmit)="onSubmitUser()">
+                <div class="tw-mb-3">
+                    <div>
+                        <label for="username">Username: </label>
+                    </div>
+                    <input
+                        type="text"
+                        pInputText
+                        id="username"
+                        formControlName="username"
+                        placeholder="Username"
+                    />
+                    @if (addEditUserForm().get('username')?.invalid && addEditUserForm().get('username')?.touched) {
+                        <p style="color:red">UserName requerido</p>
+                    }
+                </div>
+        
+                <div class="tw-mb-3">
+                    <div>
+                        <label for="mail">Email: </label>
+                    </div>
+                    <input
+                        pInputText
+                        id="mail"
+                        type="email"
+                        formControlName="mail"
+                        placeholder="Email"
+                    />
+                    @if (addEditUserForm().get('mail')?.invalid && addEditUserForm().get('mail')?.touched) {
+                        <p style="color:red">Email inválido</p>
+                    }
+                </div>
+        
+                <div class="tw-mb-3">
+                    <div>
+                        <label for="password">Password: </label>
+                    </div>
+                    <input
+                        type="text"
+                        pInputText
+                        id="password"
+                        formControlName="password"
+                        placeholder="password"
+                    />
+                    @if (addEditUserForm().get('password')?.invalid && addEditUserForm().get('password')?.touched) {
+                        <p class="tw-w-30" style="color:red">máximo 8 caracteres, 1 mayúscula, 1 carácter especial </p>
+                    }
+                </div>
+                @if( this.id()?.toString() === "0" ){
+                    <div class="tw-mb-2">
+                        <div>
+                            <label for="rol">Roles</label>
+                        </div>
+                        <p-select
+                            [options]="roles()"
+                            id="rol"
+                            formControlName="rol"
+                            optionLabel="name"
+                            placeholder="Selecciona un Rol"
+                        />
+                    </div>
+                }
+        
+                <div class="tw-mb-2">
+                    <p-button
+                        [disabled]="addEditUserForm().invalid || (isSaving$ | async)"
+                        type="submit"
+                        label="Submit"
+                    />
+                </div>
+            </form>
+        }
+        @if( labelForm === "Editar"){
+            <div>
+                @if( (usuarioByID$ | async) ){
+                    <p>	Roles asignados</p>
+                    @for (rol of (usuarioByID$ | async)?.roles ; track rol.id) {
+                        <p class="tw-bg-orange-200 tw-text-white tw-p-2 tw-mb-1">{{ rol.name }}</p>
+                    }
+                }
+                
+                <form [formGroup]="addRolForm()" (ngSubmit)="onSubmitRol()" >
+                    <div class="tw-mb-2">
+                        <div>
+                            <label for="rol">Agregar Rol</label>
+                        </div>
+                        <p-select
+                            [options]="roles()"
+                            id="rol"
+                            formControlName="rol"
+                            optionLabel="name"
+                            placeholder="Selecciona un Rol"
+                        />
+                    </div>
+
+                    <div class="tw-mb-2">
+                        <p-button
+                            [disabled]="addRolForm().invalid || (isSaving$ | async)"
+                            severity="primary"
+                            type="submit"
+                            label="Add rol"
+                        />
+                    </div>
+                </form>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,16 @@
+.container--login{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+}
+
+
+.container--login--form{
+    background-color: #f2f2f2;
+    border-radius: 2px;
+    p{
+        color:black
+    }
+}

@@ -1,0 +1,92 @@
+@let labelForm = this.id()?.toString() === "0" ?  "Crear" : "Editar";
+@let labelUpdateForm = this.id()?.toString() === "0" ?  "Guardado" : "Actualizado";
+<div>
+    <h3 class="tw-text-center">{{labelForm}} producto</h3>
+    <div class="container__messages">
+        <!-- <p-message severity="error">Mensaje de error</p-message> -->
+        @if (error$ | async ) {
+            <p-message severity="error">{{ (error$ | async) || 'Error al guardar el producto'}}</p-message>
+        }
+        @if (saveSuccess$ | async ) {
+            <p-message severity="success">Producto {{labelUpdateForm}} correctamente</p-message>
+        }
+    </div>
+    <div class="tw-flex tw-justify-center tw-gap-4">
+        @if( this.id() !== undefined ){
+            <form [formGroup]="addEditProductForm()" (ngSubmit)="onSubmitProduct()">
+                <div class="tw-mb-3">
+                    <div>
+                        <label for="nombre">Nombre: </label>
+                    </div>
+                    <input
+                        type="text"
+                        pInputText
+                        id="nombre"
+                        formControlName="nombre"
+                        placeholder="Nombre"
+                    />
+                    @if (addEditProductForm().get('nombre')?.invalid && addEditProductForm().get('nombre')?.touched) {
+                        <p style="color:red">Nombre requerido</p>
+                    }
+                </div>
+        
+                <div class="tw-mb-3">
+                    <div>
+                        <label for="mail">Cantidad: </label>
+                    </div>
+                    <input
+                        pInputText
+                        id="cantidad"
+                        type="number"
+                        formControlName="cantidad"
+                        placeholder="Cantidad"
+                    />
+                    @if (addEditProductForm().get('cantidad')?.invalid && addEditProductForm().get('cantidad')?.touched) {
+                        <p style="color:red">Cantidad inválida</p>
+                    }
+                </div>
+
+                <div class="tw-mb-3">
+                    <div>
+                        <label for="mail">Precio: </label>
+                    </div>
+                    <input
+                        pInputText
+                        id="precio"
+                        type="number"
+                        formControlName="precio"
+                        placeholder="Precio"
+                    />
+                    @if (addEditProductForm().get('precio')?.invalid && addEditProductForm().get('precio')?.touched) {
+                        <p style="color:red">Precio inválido</p>
+                    }
+                </div>
+        
+                <div class="tw-mb-3">
+                    <div>
+                        <label for="password">Imagen: </label>
+                    </div>
+                    <textarea
+                        pInputText
+                        name="imagen"
+                        id="imagen"
+                        formControlName="imagen"
+                        placeholder="Url Imagen"
+                        class="custom__text_area"
+                    ></textarea>
+                    @if (addEditProductForm().get('imagen')?.invalid && addEditProductForm().get('imagen')?.touched) {
+                        <p class="tw-w-30" style="color:red">La URL de la imagen es requerida </p>
+                    }
+                </div>
+        
+                <div class="tw-mb-2">
+                    <p-button
+                        [disabled]="addEditProductForm().invalid || (isSaving$ | async)"
+                        type="submit"
+                        label="Submit"
+                    />
+                </div>
+            </form>
+        }
+    </div>
+</div>

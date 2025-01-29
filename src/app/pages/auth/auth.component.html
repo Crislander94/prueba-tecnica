@@ -1,0 +1,68 @@
+@let errorMessage = error$;
+@let isLoadingLocal = isLoading$;
+<div class="container--login">
+    <div class="container--login--form tw-p-4">
+        <h3 class="tw-text-center">Inicio de sesión</h3>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="tw-mb-1">
+                <label for="userNameOrEmail">Email:</label>
+                <p-inputgroup>
+                    <p-inputgroup-addon>
+                        <i class="pi pi-at"></i>
+                    </p-inputgroup-addon>
+                    <input pInputText
+                        id="userNameOrEmail"
+                        type="email"
+                        formControlName="userNameOrEmail"
+                        placeholder="Username/Email"
+                    />
+                </p-inputgroup>
+            </div>
+            @if (loginForm.get('userNameOrEmail')?.invalid && loginForm.get('userNameOrEmail')?.touched) {
+                <p style="color:red">Username/Correo requerido</p>
+            }
+            <div class="tw-mb-2">
+                <label for="password">Password:</label>
+                <p-inputgroup>
+                    <p-inputgroup-addon>
+                        <i class="pi pi-key"></i>
+                    </p-inputgroup-addon>
+                    <input 
+                        id="password"
+                        type="password"
+                        formControlName="password"
+                        pInputText
+                        placeholder="Password"
+                    />
+                </p-inputgroup>
+            </div>
+            @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+                <p style="color:red">Contraseña requerida</p>
+            }
+            <div class="tw-mb-2">
+                <p-select
+                    [options]="roles"
+                    id="rol"
+                    formControlName="rol"
+                    optionLabel="name"
+                    placeholder="Selecciona un Rol"
+                />
+            </div>
+            @if (loginForm.get('rol')?.invalid && loginForm.get('rol')?.touched) {
+                <p style="color:red">Rol Requerido</p>
+            }
+            <div class="tw-flex tw-justify-center tw-mb-2">
+                <p-button type="submit" [disabled]="loginForm.invalid && (isLoadingLocal | async )" severity="info">
+                    @if( isLoadingLocal | async ){
+                        Cargando...
+                    }@else {
+                        Inicio sesión
+                    }
+                </p-button>
+            </div>
+            @if ( (errorMessage | async ) && loginFormSubmitted  ) {
+                <p-message severity="error">Credenciales incorrectas</p-message>
+            }
+        </form>
+    </div>
+</div>
