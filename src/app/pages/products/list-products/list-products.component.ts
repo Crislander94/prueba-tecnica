@@ -7,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { Store } from '@ngrx/store';
 import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
-import { deletingProduct, loadProductRequest, productsFeature } from 'src/app/store';
+import { authFeature, deletingProduct, loadProductRequest, productsFeature } from 'src/app/store';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InputIcon } from 'primeng/inputicon';
 import { IconField } from 'primeng/iconfield';
@@ -49,6 +49,7 @@ store = inject( Store );
   currentPage = signal<number>(0);
   visible: boolean = false;
   idSelected = signal<number | null >( null );
+  userAuth$ = this.store.select( authFeature.selectUsuario );
 
   searchProductForm: Signal<FormGroup<SearchForm>> = computed(
     () => 

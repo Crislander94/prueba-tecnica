@@ -8,30 +8,33 @@
         <p-message severity="success">Usuario eliminado correctamente</p-message>
     }
 </div>
+
 @if( (responseUploadFile$ | async) !== null ){
     <div class="tw-mb-2 tw-flex tw-justify-start">
-        <p-accordion value="0" >
-            <p-accordion-panel value="0">
-                <p-accordion-header class="new__color">Respuesta de la carga de archivo&nbsp;&nbsp;</p-accordion-header>
-                <p-accordion-content style="padding: 0 !important;">
-                    <div class="tw-p-5 content__errores">
+        <div class="tw-z-50">
+            <p-accordion value="0">
+                <p-accordion-panel value="0">
+                    <p-accordion-header>Respuesta de la carga de archivo&nbsp;&nbsp;</p-accordion-header>
+                    <p-accordion-content>
                         <h3>Detalles de la carga de archivos</h3>
                         <p><b>Total de usuarios subidos:</b> {{ (responseUploadFile$ | async )?.countSuccess }}</p>
                         <p><b>Total de usuarios con errores:</b> {{ (responseUploadFile$ |async )?.countFailure }}</p>
                         <br />
-                        <h4>Usuarios con errores</h4>
-                        @for (response of (responseUploadFile$ |async )?.usuariosFailure; track response.errorsMessage ) {
-                            <p><b>Errores de - </b>{{ response.usuarioFailure.username }}</p>
-                            <ul>
-                                @for (errorMessage of response.errorsMessage; track errorMessage) {
-                                    <li>{{ errorMessage }}</li>
-                                }
-                            </ul>
+                        @if((responseUploadFile$ |async )?.usuariosFailure ){
+                            <h4>Usuarios con errores</h4>
+                            @for (response of (responseUploadFile$ |async )?.usuariosFailure; track response.errorsMessage ) {
+                                <p><b>Errores de - </b>{{ response.usuarioFailure.username }}</p>
+                                <ul>
+                                    @for (errorMessage of response.errorsMessage; track errorMessage) {
+                                        <li>{{ errorMessage }}</li>
+                                    }
+                                </ul>
+                            }
                         }
-                    </div>
-                </p-accordion-content>
-            </p-accordion-panel>
-        </p-accordion>
+                    </p-accordion-content>
+                </p-accordion-panel>
+            </p-accordion>
+        </div>
     </div>
 }
 <form class="tw-mb-2" [formGroup]="searchUserForm()" (ngSubmit)="onSearchUser()">
@@ -57,8 +60,21 @@
             aria-label="Importar Usuarios"
             (onClick)="showDialogUpload()"
         />
-        <p-button class="tw-ml-2" pTooltip="Exportar Usuarios/PDF" icon="pi pi-file-pdf" severity="danger" aria-label="Exportar pdf" />
-        <p-button class="tw-ml-2" pTooltip="Exportar Usuarios/Excel" icon="pi pi-file-excel" aria-label="Exportar Excel" />
+        <p-button
+            class="tw-ml-2"
+            pTooltip="Exportar Usuarios/PDF"
+            icon="pi pi-file-pdf"
+            severity="danger"
+            aria-label="Exportar pdf"
+            (onClick)="onDownloadUsersPdf()"
+        />
+        <p-button
+            class="tw-ml-2"
+            pTooltip="Exportar Usuarios/Excel"
+            icon="pi pi-file-excel"
+            aria-label="Exportar Excel"
+            (onClick)="onDownloadUsersExcel()"
+        />
     </div>
     @if (searchUserForm().get('search')?.invalid && searchUserForm().get('search')?.touched) {
         <p style="color:red; text-align: center">La busqueda debe tener al menos dos caracteres</p>
@@ -85,7 +101,9 @@
                 <th>Username</th>
                 <th>Email</th>
                 <th>Rol</th>
-                <th>Acciones</th>
+                @if( (userAuth$ | async)?.rol === "superadmin" ){
+                    <th>Acciones</th>
+                }
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-usuario>
@@ -94,14 +112,16 @@
                 <td>{{ usuario.username }}</td>
                 <td>{{ usuario.mail }}</td>
                 <td>{{ usuario.rol }}</td>
-                <td>
-                    <a [routerLink]="['/dashboard/usuarios/addEdit', usuario.id]">
-                        Editar
-                    </a>
-                    <a (click)="showDialog( usuario.id )" style="cursor: pointer;">
-                        Eliminar
-                    </a>
-                </td>
+                @if( (userAuth$ | async)?.rol === "superadmin" ){
+                    <td>
+                        <a [routerLink]="['/dashboard/usuarios/addEdit', usuario.id]">
+                            Editar
+                        </a>
+                        <a (click)="showDialog( usuario.id )" style="cursor: pointer;">
+                            Eliminar
+                        </a>
+                    </td>
+                }
             </tr>
         </ng-template>
         <ng-template #emptymessage>

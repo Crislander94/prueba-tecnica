@@ -20,7 +20,7 @@ import { AsyncPipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { filter, firstValueFrom, Observable, Subject, take, takeUntil } from 'rxjs';
-import { productsFeature } from 'src/app/store';
+import { authFeature, productsFeature } from 'src/app/store';
 import { ProductAPI } from 'src/app/models';
 import { loadProductById, savingProduct, updatingProduct } from '../../../store/products/products.actions';
 
@@ -55,6 +55,8 @@ export class AddEditProductComponent implements OnInit {
     error$: Observable<string | null > = this.store.select( productsFeature.selectError );
     saveSuccess$: Observable<boolean> = this.store.select( productsFeature.selectSaveSuccess );
     productByID$ : Observable<ProductAPI | null > = this.store.select( productsFeature.selectProduct );
+    userAuth$ = this.store.select( authFeature.selectUsuario );
+
     private productForm: ProductForm = {
       nombre: new FormControl<string>( '', {
         nonNullable: true,

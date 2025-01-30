@@ -59,6 +59,14 @@ export class UsuarioService {
     return this.http.post<ResponseAPI<UserCSVValidate>>(`${ this.apiURL }/importCSV`, data );
   }
 
+  exportarUsersPDF(): Observable<Blob> {
+    return this.http.get(`${this.apiURL}/pdf`, { responseType: 'blob' }); // Recibir el PDF como Blob
+  }
+
+  exportarUsersExcel(): Observable<Blob> {
+    return this.http.get(`${this.apiURL}/excel`, { responseType: 'blob' }); // Recibir el PDF como Blob
+  }
+
   // private handleError(error: HttpErrorResponse) {
   //   if (error.status === 403) {
   //     // Manejo del error 403

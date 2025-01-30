@@ -17,6 +17,7 @@ import { Rol } from '../../../interfaces/types';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { 
+  authFeature,
   loadUserById,
   savingRolUser,
   savingUser,
@@ -69,6 +70,7 @@ export class AddEditUsuarioComponent implements OnInit {
   saveSuccess$: Observable<boolean> = this.store.select( usersFeature.selectSaveSuccess );
   usuarioByID$ : Observable<UserAPI | null > = this.store.select( usersFeature.selectUsuario );
   rolService = inject( RolService );
+    userAuth$ = this.store.select( authFeature.selectUsuario );
   private userForm: UserForm = {
     username: new FormControl<string>( '', {
       nonNullable: true,

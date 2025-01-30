@@ -8,13 +8,14 @@ import { InputIcon } from 'primeng/inputicon';
 import { IconField } from 'primeng/iconfield';
 import { AccordionModule } from 'primeng/accordion';
 import { Store } from '@ngrx/store';
-import { deletingUser, loadUserRequest, uploadingUsersFromCSV, usersFeature } from '../../../store';
+import { authFeature, deletingUser, loadUserRequest, uploadingUsersFromCSV, usersFeature } from '../../../store';
 import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
 import { Tooltip } from 'primeng/tooltip';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UserCSVValidate } from 'src/app/models';
+import { UsuarioService } from 'src/app/services/usuario.service';
 
 const sizeDefault = 10;
 interface SearchForm {
@@ -48,6 +49,9 @@ interface UploadUser{
 })
 export class ListUsuariosComponent implements OnInit {
   store = inject( Store );
+  //!Mala práctica se debe ejecutar el proceso por medio de el store
+  usuarioService = inject( UsuarioService );
+
   sizeDefault = sizeDefault;
   usuarios$ = this.store.select( usersFeature.selectUsuarios );
   isLoading$ = this.store.select( usersFeature.selectIsLoading );
@@ -61,6 +65,7 @@ export class ListUsuariosComponent implements OnInit {
   visibleUpload: boolean = false;
   idSelected = signal<number | null >( null );
   selectedFile: File | null = null;
+  userAuth$ = this.store.select( authFeature.selectUsuario );
 
   showDialog( id: number ) {
     this.visible = true;
@@ -173,5 +178,29 @@ export class ListUsuariosComponent implements OnInit {
     if (fileInput) {
       fileInput.value = ''; // Esto borra la selección del archivo
     }
+  }
+
+  onDownloadUsersPdf() {
+    this.usuarioService.exportarUsersPDF().subscribe( response => {
+      const blob = new Blob([response], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'usuarios.pdf';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+  }
+
+  onDownloadUsersExcel() {
+    this.usuarioService.exportarUsersExcel().subscribe( response => {
+      const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'usuarios.xlsx';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
   }
 }
